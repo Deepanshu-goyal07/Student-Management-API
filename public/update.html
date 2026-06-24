@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+    <h2>Update Student</h2>
+
+    <form id="updateForm">
+
+        <input type="number" id="id" placeholder="Student ID">
+        <br><br>
+
+        <input type="text" id="name" placeholder="Name">
+        <br><br>
+
+        <input type="number" id="age" placeholder="Age">
+        <br><br>
+
+        <input type="text" id="course" placeholder="Course">
+        <br><br>
+
+        <button>Update</button>
+
+    </form>
+
+    <script>
+
+        document
+            .getElementById("updateForm")
+            .addEventListener("submit",
+                async function (e) {
+
+                    e.preventDefault();
+                    const id = document.getElementById("id").value;
+
+                    await fetch(
+                        `/students/${id}`,
+                        {
+                            method: "PUT",
+                            headers: {"Content-Type":"application/json"},
+                            body: JSON.stringify({
+                                name: document.getElementById("name").value,
+                                age: document.getElementById("age").value,
+                                course: document.getElementById("course").value
+                            })
+                        });
+                    alert("Updated");
+                });
+    </script>
+
+</body>
+
+</html>
