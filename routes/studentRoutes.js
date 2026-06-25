@@ -1,19 +1,39 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+const os = require("os");
 const router = express.Router();
-const filePath = path.join(__dirname, "../data.json");
 
+const templatePath = path.join(__dirname, "../data.json");
+const filePath = path.join(os.tmpdir(), "student_data.json");
 
 // Read Data
 function getStudents() {
-    const data = fs.readFileSync(filePath);
-    return JSON.parse(data);
+    try {
+        if (!fs.existsSync(filePath)) {
+            const data = fs.readFileSync(templatePath, "utf8");
+            fs.writeFileSync(filePath, data);
+        }
+        const data = fs.readFileSync(filePath, "utf8");
+        return JSON.parse(data);
+    } catch (error) {
+        console.error("Error reading students data from temp:", error);
+        try {
+            const data = fs.readFileSync(templatePath, "utf8");
+            return JSON.parse(data);
+        } catch (err) {
+            return [];
+        }
+    }
 }
 
 // Save Data
 function saveStudents(students) {
-    fs.writeFileSync(filePath, JSON.stringify(students));
+    try {
+        fs.writeFileSync(filePath, JSON.stringify(students, null, 2));
+    } catch (error) {
+        console.error("Error saving students data to temp file:", error);
+    }
 }
 
 // GET ALL STUDENTS
